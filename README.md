@@ -14,3 +14,7 @@ You can include as much art as you like, changing between images with the 'A' bu
 The D-pad will move the image if it is bigger than the Playdate's display. I recommend
 you leave the album art as big as possible, it is fun to hunt through the detail of a big 
 image while listening to your music!
+
+Licence and attribution for the font is in main.lua.
+
+Thanks for looking.
