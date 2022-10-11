@@ -1,4 +1,3 @@
-lyrics
-graphics
-music
-album_data.lua
+
+*.pdx
+album-*
