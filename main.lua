@@ -49,8 +49,8 @@ local line_spacing = 7
 local height = 1
 local audio_buffer_size = 2     -- 1 second isn;t enough for the biggest art transitions
 
-local songs, art 
-songs, art = import("album_data.lua")
+local songs, art, about, help 
+songs, art, about, help = import("album_data.lua")
 
 local current_song
 local current_art
@@ -101,11 +101,12 @@ local function scan_lyrics(lyrics)
         y = y + height + line_spacing
         if middle then y = y + height + 2 end
         
-        print(line)
     end
     
     return data_table, y+(100*(height+line_spacing))
 end
+
+local mode = 'view'
 
 -- a function that loads the graphics for the menu
 function load_game()
@@ -132,11 +133,22 @@ function load_game()
     next_cover = gr.image.new(art[next_art].file)
     
     
+    about.text, about.loop_location = scan_lyrics(about.text)
+    about.position = 0
+    help.text, help.loop_location = scan_lyrics(help.text)
+    help.position = 0
+    
+    
+    local menu = playdate.getSystemMenu()
+    menu:addMenuItem("About", function() mode = 'about' end)
+    menu:addMenuItem("Help", function() mode = 'help' end)
+
+
     -- load audio
     player = snd.fileplayer.new(songs[current_song].audio, audio_buffer_size)
     player:setStopOnUnderrun(false)
     player:play()
-    
+
 end
 
 -- actually call the load function
@@ -147,7 +159,6 @@ local crank_angle = nil
 local top_lyric_position = 0
 --local display_playback_adjustment_timer = nil
 --local adjust_speed = false
-local mode = 'view'
 
 local function move_art(button_state)
     local x = art[current_art].x
@@ -171,14 +182,28 @@ local function move_art(button_state)
     if art[current_art].y < -art[current_art].h+240 then art[current_art].y = -art[current_art].h+240 end
 end    
 
-local function move_lyrics(angle_delta)
-    top_lyric_position = top_lyric_position + (angle_delta / 10)
+local function move_text(angle_delta, position, loop_location)
+    position = position + (angle_delta / 10)
 
-    if top_lyric_position < -songs[current_song].loop_location then
-        top_lyric_position = 100
-    elseif top_lyric_position > 150 then
-        top_lyric_position = 50 - songs[current_song].loop_location
+    if position < -loop_location then
+        position = 100
+    elseif position > 150 then
+        position = 50 - loop_location
     end
+    
+    return position
+end
+
+local function move_lyrics(angle_delta)
+    top_lyric_position = move_text(angle_delta, top_lyric_position, songs[current_song].loop_location)
+end
+
+local function move_about(angle_delta)
+    about.position = move_text(angle_delta, about.position, about.loop_location)
+end
+
+local function move_help(angle_delta)
+    help.position = move_text(angle_delta, help.position, help.loop_location)
 end
 
 local function adjust_volume(angle_delta)
@@ -210,12 +235,12 @@ local function adjust_track(button_state, angle_delta)
     end
 end
 
-local function print_lyrics()
+local function print_text(text, position)
 
     gr.setColor(gr.kColorWhite)
     
-    for _,line in ipairs(songs[current_song].lyrics) do
-        local y = top_lyric_position + line.y
+    for _,line in ipairs(text) do
+        local y = position + line.y
         if y > -(height*2) and y < 240 then
             if line.middle then
                 
@@ -232,6 +257,18 @@ local function print_lyrics()
             end
         end
     end
+end
+
+local function print_lyrics()
+    print_text(songs[current_song].lyrics, top_lyric_position)
+end
+
+local function print_about()
+    print_text(about.text, about.position)
+end
+
+local function print_help()
+    print_text(help.text, help.position)
 end
 
 local function display_volume()
@@ -306,6 +343,10 @@ function playdate.update()
     
     if mode == 'lyrics' then
         move_lyrics(angle_delta)
+    elseif mode == 'about' then 
+        move_about(angle_delta) 
+    elseif mode == 'help' then 
+        move_help(angle_delta) 
     elseif mode == 'volume' then
         adjust_volume(angle_delta)
     elseif mode == 'track' then
@@ -319,15 +360,19 @@ function playdate.update()
     
     if mode == 'lyrics' then 
         print_lyrics() 
+    elseif mode == 'about' then 
+        print_about() 
+    elseif mode == 'help' then 
+        print_help() 
     elseif mode == 'volume' then
         display_volume()
     elseif mode == 'track' then
         display_track()
     else
         -- debug x y print
-        gr.setColor(gr.kColorWhite)    
-        gr.fillRect(20-2, 200-2, 100, height+4)
-        gr.drawText(-art[current_art].x..","..-art[current_art].y, 20, 200)
+        --gr.setColor(gr.kColorWhite)    
+        --gr.fillRect(20-2, 200-2, 100, height+4)
+        --gr.drawText(-art[current_art].x..","..-art[current_art].y, 20, 200)
     end
     
     -- move on to the next song
