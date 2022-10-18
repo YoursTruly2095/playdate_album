@@ -9,8 +9,10 @@ help.lua
 
 These are texts that are displayed when the 
 'about' and 'help' system menu options are 
-selected
+selected.
 
+Wherever you location these files,
+reference them in album_data.lua
 --]]
 
 text = 

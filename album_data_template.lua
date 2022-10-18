@@ -50,7 +50,17 @@ local art =
     },
     
     -- etc...
-    
 }
 
-return songs, art
+local about =
+{
+    text = import("about.lua"),
+}
+
+local help =
+{
+    text = import("help.lua"),
+}
+
+
+return songs, art, about, help
