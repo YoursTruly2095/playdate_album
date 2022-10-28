@@ -7,7 +7,7 @@ compile it all with the playdate compiler (pdc, find it at https://play.date/dev
 to your Playdate, and enjoy. Follow the templates for album_data.lua and lyric, help and about 
 files.
 
-Provides some basic controls for view lyrics, setting volume, track select, and scrubbing 
+Provides some basic controls for viewing lyrics, setting volume, track select, and scrubbing 
 through the audio using the crank. Use 'B' button to select mode - single click for lyrics,
 double click to volume, triple click for track select / scrubbing. Help and about texts are
 accessed through the Playdate system menu.
