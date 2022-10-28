@@ -19,4 +19,9 @@ image while listening to your music!
 
 Licence and attribution for the font is in main.lua.
 
+I used this https://github.com/dbry/adpcm-xq to reduce the file sizes of wav files to keep
+my project a reasonable size for the Playdate. A full CD's worth of uncompressed audio seemed
+to be more than the Playdate's sideloading system was willing to deal with. Using this encoder,
+the entire project was just over 100Mb, still big for a Playdate but functional.
+
 Thanks for looking.
